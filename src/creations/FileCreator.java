@@ -7,14 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import utilities.Utility;
 import constants.Constants;
+import exceptions.InvalidFileException;
 
 public class FileCreator {
 	private static long SubFilesCount = 0;
@@ -23,12 +24,17 @@ public class FileCreator {
 	 * @param fileSize
 	 * @throws IOException
 	 */
-	public static void CreateRandomNumbersFile(long fileSize) throws IOException{
-		File f = new File("fileForSort.txt");
+	public static File CreateRandomNumbersFile(long fileSize) throws IOException{
+		File dir = new File("files");
+				
+		if(!dir.exists())
+			dir.mkdir();
+		
+		File f = new File("files/fileForSort.txt");
 		
 		checkFile(f);
 		
-		Random rand = new Random(); 
+		Random rand = new Random(System.currentTimeMillis()); 
 		try(PrintWriter pr = new PrintWriter(f)){
 			System.out.println("Begin writing into a file");
 			int numbersCount = 0;
@@ -42,6 +48,7 @@ public class FileCreator {
 			System.out.println(numbersCount + " numbers are writen into the file");
 			System.out.println("The File is filled with random Numbers");
 		}
+		return f;
 	}
 	
 	private static void checkFile(File f) throws IOException{
@@ -55,7 +62,9 @@ public class FileCreator {
 	}
 	
 	public static void CreateSortedSubFiles(File f, long subFileSize) throws FileNotFoundException{
-		if(f == null)
+		System.out.println("Begin creating subfiles!");
+		
+		if(f == null || !f.exists())
 			throw new FileNotFoundException();
 		
 		try(BufferedReader br = new BufferedReader(new FileReader(f))) {
@@ -64,18 +73,28 @@ public class FileCreator {
 		    List<Integer> fileExtractionList = new ArrayList<Integer>();
 		    
 		    while ((text = br.readLine()) != null) {
-		    	if(Utility.checkStringForNonCharacters(text))
+		    	if(!Utility.validateFileContent(text))
 		    	{
-		    		String[] numStrings = text.split(Constants.FILE_DELIMETER);
+		    		throw new InvalidFileException("The passed file content formatting is not supported");
+		    	}
+		    	
+	    		if(text.contains(Constants.FILE_DELIMETER)){
+	    			String[] numStrings = text.split(Constants.FILE_DELIMETER);
 		    		
 		    		for(String s : numStrings){
-		    			appendToList(fileExtractionList, Integer.valueOf(text));
-		    		}
-		    	}
-		    	else{
-		    		appendToList(fileExtractionList, Integer.valueOf(text));
-		    	}
+		    			appendToList(fileExtractionList, Integer.valueOf(s));
+		    		}	
+	    		}
+	    		else
+	    			appendToList(fileExtractionList, Integer.valueOf(text));
+		    		
 		    }
+		    
+		    if(fileExtractionList.size() > 0){
+		    	writeListToFile(fileExtractionList);
+		    }
+		    
+		    System.out.println("Done creating subfiles!");
 		} catch (FileNotFoundException e) {
 		    e.printStackTrace();
 		} catch (IOException e) {
@@ -93,9 +112,21 @@ public class FileCreator {
 		fileExtractionList.add(element);
 	}
 	
+	
+	
 	private static void writeListToFile(List<Integer> list) throws IOException{
-		String fileName = "subFile_" + SubFilesCount + ".txt";
-		File file = new File(fileName);
+		File outerDir = new File("files");
+		File innerDir = new File("files/subfiles");
+		
+		if(!outerDir.exists())
+			outerDir.mkdir();
+		
+		if(!innerDir.exists())
+			innerDir.mkdir();
+						
+		String fileName = "subFile_" + (SubFilesCount++) + ".txt";
+		String pathString = "files/subFiles/" + fileName;
+		File file = new File(pathString);
 		
 		checkFile(file);
 		
