@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import constants.Constants;
+
 public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 	
 	private int begin;
@@ -30,10 +32,9 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 		}
 
 		int middle = this.begin + (this.end - this.begin) / 2;
-		FilesSorterAndMergerTask leftTask = new FilesSorterAndMergerTask(
-				this.files, this.begin, middle);
-		FilesSorterAndMergerTask rightTask = new FilesSorterAndMergerTask(
-				this.files, middle, this.end);
+		
+		FilesSorterAndMergerTask leftTask = new FilesSorterAndMergerTask(this.files, this.begin, middle);
+		FilesSorterAndMergerTask rightTask = new FilesSorterAndMergerTask(this.files, middle, this.end);
 
 		invokeAll(leftTask, rightTask);
 
@@ -54,16 +55,21 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 	}
 
 	private File mergeFiles(File fileA, File fileB) throws FileNotFoundException, IOException{
+		System.out.println(fileA.getName() + "   " + fileB.getName());
 		
-		File mergedFile = new File("subForkFile_" + (SubForkFilesCount++) + ".txt");
+		String newSubFileName = "/subForkFile_" + (SubForkFilesCount++);
+		File mergedFile = new File(   Constants.MAIN_FILES_FOLDER_NAME + "/" 
+									+ Constants.SUB_FILES_FOLDER_NAME 
+									+ newSubFileName
+									+ Constants.FILE_TYPE);
+		
+		checkFile(mergedFile);
 		
 		FileReader fileReaderA = null;
 		FileReader fileReaderB = null;
-		boolean isFileARenamed = fileA.renameTo(new File("x_" + fileA.getName()));
-		boolean isFileBRenamed = fileB.renameTo(new File("x_" + fileB.getName()));
 		
-		if(!isFileARenamed || !isFileBRenamed)
-			throw new RuntimeException("Error in renaming file");
+//		if(!isFileARenamed || !isFileBRenamed)
+//			throw new RuntimeException("Error in renaming file");
 			
 		try
 		{
@@ -82,25 +88,32 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 				int second;
 				
 				while(true){
-					if(lineA != null)
-						first = Integer.valueOf(readerA.readLine());
+					if(lineA != null){
+//						String val = readerA.readLine();
+//						if(val == null)
+//							continue;
+						first = Integer.valueOf(lineA);
+					}
 					else{
 						if(lineB != null){
 							do{
 								writer.println(Integer.valueOf(lineB));
 							}while((lineB = readerB.readLine()) != null);
 						}
-										
+									
 						return mergedFile;
 					}
 					
-					if(lineB != null)
-						second = Integer.valueOf(readerB.readLine());
+					if(lineB != null){
+//						String val = readerB.readLine();
+//						if(val == null)
+//							continue;
+						second = Integer.valueOf(lineB);
+					}
 					else{
-						while((lineB = readerB.readLine()) != null){
-							writer.println(Integer.valueOf(lineB));
+						while((lineA = readerA.readLine()) != null){
+							writer.println(Integer.valueOf(lineA));
 						}
-						
 						return mergedFile;
 					}
 					
@@ -121,8 +134,8 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 						
 						lineA = readerA.readLine();
 						lineB = readerB.readLine();
-					}
-						
+					}	
+	
 				}
 			}
 		}
@@ -132,12 +145,27 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Passed files do not exist");
 		}
-		finally{
+		finally{	
+			
+			boolean isFileARenamed = fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
+			boolean isFileBRenamed = fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
+			
 			if(fileReaderA != null)
 				fileReaderA.close();
 			
 			if(fileReaderB != null)
 				fileReaderB.close();
+		}
+	}
+	
+	
+	private static void checkFile(File f) throws IOException{
+		if(f != null)
+		{
+			if(f.exists())
+				f.delete();
+			else
+				f.createNewFile();
 		}
 	}
 }

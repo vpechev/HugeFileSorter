@@ -34,7 +34,7 @@ public class Utility {
         {
             for (Path file : dirStream)
             {
-                if (Files.isRegularFile(file)  &&  file.toString().endsWith(".txt"))
+                if (Files.isRegularFile(file)  &&  file.toString().endsWith(Constants.FILE_TYPE))
                 {
                 	subFiles.add(file.toFile());
                 }

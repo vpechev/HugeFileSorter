@@ -25,12 +25,12 @@ public class FileCreator {
 	 * @throws IOException
 	 */
 	public static File CreateRandomNumbersFile(long fileSize) throws IOException{
-		File dir = new File("files");
+		File dir = new File(Constants.MAIN_FILES_FOLDER_NAME);
 				
 		if(!dir.exists())
 			dir.mkdir();
 		
-		File f = new File("files/fileForSort.txt");
+		File f = new File(Constants.MAIN_FILES_FOLDER_NAME + "/fileForSort" + Constants.FILE_TYPE);
 		
 		checkFile(f);
 		
@@ -115,8 +115,8 @@ public class FileCreator {
 	
 	
 	private static void writeListToFile(List<Integer> list) throws IOException{
-		File outerDir = new File("files");
-		File innerDir = new File("files/subfiles");
+		File outerDir = new File(Constants.MAIN_FILES_FOLDER_NAME);
+		File innerDir = new File(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 		
 		if(!outerDir.exists())
 			outerDir.mkdir();
@@ -124,8 +124,8 @@ public class FileCreator {
 		if(!innerDir.exists())
 			innerDir.mkdir();
 						
-		String fileName = "subFile_" + (SubFilesCount++) + ".txt";
-		String pathString = "files/subFiles/" + fileName;
+		String fileName = "subFile_" + (SubFilesCount++) + Constants.FILE_TYPE;
+		String pathString = Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME + "/" + fileName;
 		File file = new File(pathString);
 		
 		checkFile(file);
