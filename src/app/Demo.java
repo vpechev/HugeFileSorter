@@ -22,16 +22,21 @@ public class Demo {
 		// TODO Auto-generated method stub
 		try {
 			//deletes the files directory from the last run
-			//Demo.cleanWorkingDirectory();
+			//Utility.cleanWorkingDirectory();
 						
 			//File initialRandomFile = FileCreator.CreateRandomNumbersFile(1_073_741_824);
 			
 			File initialRandomFile = new File("files/fileForSort.txt");
 			
+			long t0 = System.currentTimeMillis();
 			FileCreator.CreateSortedSubFiles(initialRandomFile, Constants.SUB_FILE_SIZE);
+			long t01 = System.currentTimeMillis();
+			System.out.println("Total time for creating sub files " + (t01 - t0));
+			
 			
 			Path subFilesDir = Paths.get(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 			List<File> subfiles = Utility.GetSubFilesFromDirectory(subFilesDir);
+			
 			
 			ForkJoinPool pool = new ForkJoinPool();
 			try{
@@ -49,27 +54,6 @@ public class Demo {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	private static void cleanWorkingDirectory() throws IOException{
-		File folder = new File(Constants.MAIN_FILES_FOLDER_NAME);
-		if(folder.exists()){
-		   Path directory = Paths.get(folder.getAbsolutePath());
-		   Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
-			   @Override
-			   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				   Files.delete(file);
-				   return FileVisitResult.CONTINUE;
-			   }
-
-			   @Override
-			   public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				   Files.delete(dir);
-				   return FileVisitResult.CONTINUE;
-			   }
-
-		   });
 		}
 	}
 	

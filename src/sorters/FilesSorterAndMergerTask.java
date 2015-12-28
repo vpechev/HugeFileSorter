@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import utilities.Utility;
 import constants.Constants;
 
 public class FilesSorterAndMergerTask extends RecursiveTask<File> {
@@ -42,12 +43,10 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 			return mergeFiles(leftTask.join(), rightTask.join());
 		}
 		catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
 		}
@@ -55,7 +54,7 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 	}
 
 	private File mergeFiles(File fileA, File fileB) throws FileNotFoundException, IOException{
-		System.out.println(fileA.getName() + "   " + fileB.getName());
+		System.out.println("Merging files: " + fileA.getName() + " and  " + fileB.getName());
 		
 		String newSubFileName = "/subForkFile_" + (SubForkFilesCount++);
 		File mergedFile = new File(   Constants.MAIN_FILES_FOLDER_NAME + "/" 
@@ -63,7 +62,7 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 									+ newSubFileName
 									+ Constants.FILE_TYPE);
 		
-		checkFile(mergedFile);
+		Utility.checkFile(mergedFile);
 		
 		FileReader fileReaderA = null;
 		FileReader fileReaderB = null;
@@ -89,9 +88,6 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 				
 				while(true){
 					if(lineA != null){
-//						String val = readerA.readLine();
-//						if(val == null)
-//							continue;
 						first = Integer.valueOf(lineA);
 					}
 					else{
@@ -105,9 +101,6 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 					}
 					
 					if(lineB != null){
-//						String val = readerB.readLine();
-//						if(val == null)
-//							continue;
 						second = Integer.valueOf(lineB);
 					}
 					else{
@@ -141,31 +134,19 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 		}
 		catch (FileNotFoundException e) 
         {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new IllegalArgumentException("Passed files do not exist");
 		}
 		finally{	
 			
-			boolean isFileARenamed = fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
-			boolean isFileBRenamed = fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
+			/*boolean isFileARenamed = */ fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
+			/*boolean isFileBRenamed = */ fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
 			
 			if(fileReaderA != null)
 				fileReaderA.close();
 			
 			if(fileReaderB != null)
 				fileReaderB.close();
-		}
-	}
-	
-	
-	private static void checkFile(File f) throws IOException{
-		if(f != null)
-		{
-			if(f.exists())
-				f.delete();
-			else
-				f.createNewFile();
 		}
 	}
 }

@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
@@ -19,53 +21,41 @@ import exceptions.InvalidFileException;
 
 public class FileCreator {
 	private static long SubFilesCount = 0;
+	
+	
 	/**
-	 * Creates file with random numbers. The size of the file is passed as argument
-	 * @param fileSize
+	 * Creates file with random integer numbers
+	 * @param fileSize size of the file that will be created
 	 * @throws IOException
 	 */
 	public static File CreateRandomNumbersFile(long fileSize) throws IOException{
 		File dir = new File(Constants.MAIN_FILES_FOLDER_NAME);
-				
-		if(!dir.exists())
-			dir.mkdir();
+		
+		Utility.checkDirectory(dir);
 		
 		File f = new File(Constants.MAIN_FILES_FOLDER_NAME + "/fileForSort" + Constants.FILE_TYPE);
 		
-		checkFile(f);
+		Utility.checkFile(f);
 		
 		Random rand = new Random(System.currentTimeMillis()); 
 		try(PrintWriter pr = new PrintWriter(f)){
-			System.out.println("Begin writing into a file");
-			int numbersCount = 0;
+			System.out.println("Begin writing into a file.");
 			
 			while(Files.size(f.toPath()) <= fileSize){
-				int value = rand.nextInt(1_000_000); 
+				int value = rand.nextInt(Constants.MAX_INTEGER_NUMBER); 
 				pr.println(value);
-				numbersCount++;
 			}
 			
-			System.out.println(numbersCount + " numbers are writen into the file");
-			System.out.println("The File is filled with random Numbers");
+			System.out.println("The File is filled with random Numbers.");
 		}
 		return f;
 	}
 	
-	private static void checkFile(File f) throws IOException{
-		if(f != null)
-		{
-			if(f.exists())
-				f.delete();
-			else
-				f.createNewFile();
-		}
-	}
 	
 	public static void CreateSortedSubFiles(File f, long subFileSize) throws FileNotFoundException{
 		System.out.println("Begin creating subfiles!");
 		
-		if(f == null || !f.exists())
-			throw new FileNotFoundException();
+		Utility.validateFile(f);
 		
 		try(BufferedReader br = new BufferedReader(new FileReader(f))) {
 		    String text = null;
@@ -90,6 +80,7 @@ public class FileCreator {
 		    		
 		    }
 		    
+		    // After the whole file is read, check if the collection contains some remained elements
 		    if(fileExtractionList.size() > 0){
 		    	writeListToFile(fileExtractionList);
 		    }
@@ -103,6 +94,14 @@ public class FileCreator {
 		
 	}
 	
+	/**
+	 * Appends the passed element to the collection. If the elements count is more than the maximum allowed elements, 
+	 * the collection will be written to a file and this collection will be cleared.
+	 * 
+	 * @param fileExtractionList
+	 * @param element
+	 * @throws IOException
+	 */
 	private static void appendToList(List<Integer> fileExtractionList, int element) throws IOException{
 		if( fileExtractionList.size() >= Constants.MAX_SUBFILE_COLLECTION_ELEMENTS_COUNT ){
 			writeListToFile(fileExtractionList);
@@ -111,24 +110,19 @@ public class FileCreator {
 		
 		fileExtractionList.add(element);
 	}
-	
-	
-	
+		
 	private static void writeListToFile(List<Integer> list) throws IOException{
 		File outerDir = new File(Constants.MAIN_FILES_FOLDER_NAME);
 		File innerDir = new File(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 		
-		if(!outerDir.exists())
-			outerDir.mkdir();
-		
-		if(!innerDir.exists())
-			innerDir.mkdir();
+		Utility.checkDirectory(outerDir);
+		Utility.checkDirectory(innerDir);
 						
 		String fileName = "subFile_" + (SubFilesCount++) + Constants.FILE_TYPE;
 		String pathString = Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME + "/" + fileName;
 		File file = new File(pathString);
 		
-		checkFile(file);
+		Utility.checkFile(file);
 		
 		list = Utility.sortList(list);
 		
@@ -137,6 +131,5 @@ public class FileCreator {
 				pr.println(i);
 			}
 		}
-	}
-	
+	}	
 }
