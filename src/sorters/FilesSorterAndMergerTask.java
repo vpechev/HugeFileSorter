@@ -14,6 +14,7 @@ import constants.Constants;
 
 public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 	
+	private static final long serialVersionUID = 3247978118036520529L;
 	private int begin;
 	private int end;
 	private List<File> files;
@@ -64,16 +65,15 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 		
 		Utility.checkFile(mergedFile);
 		
-		FileReader fileReaderA = null;
-		FileReader fileReaderB = null;
+//		FileReader fileReaderA = null;
+//		FileReader fileReaderB = null;
 		
 //		if(!isFileARenamed || !isFileBRenamed)
 //			throw new RuntimeException("Error in renaming file");
 			
-		try
+		try(FileReader fileReaderA = new FileReader(fileA); FileReader fileReaderB = new FileReader(fileB))
 		{
-			fileReaderA = new FileReader(fileA); 
-			fileReaderB = new FileReader(fileB);
+					
 			
 			try( BufferedReader readerA = new BufferedReader(fileReaderA);
 				 BufferedReader readerB = new BufferedReader(fileReaderB); 
@@ -137,16 +137,16 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Passed files do not exist");
 		}
-		finally{	
-			
-			/*boolean isFileARenamed = */ fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
-			/*boolean isFileBRenamed = */ fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
-			
-			if(fileReaderA != null)
-				fileReaderA.close();
-			
-			if(fileReaderB != null)
-				fileReaderB.close();
-		}
+//		finally{	
+//			
+//			/*boolean isFileARenamed = */ fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
+//			/*boolean isFileBRenamed = */ fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
+//			
+//			if(fileReaderA != null)
+//				fileReaderA.close();
+//			
+//			if(fileReaderB != null)
+//				fileReaderB.close();
+//		}
 	}
 }

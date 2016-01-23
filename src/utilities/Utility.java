@@ -20,17 +20,29 @@ import constants.Constants;
 
 public class Utility {
 	
+	/**
+	 * sorts the passed list. Currently uses the default Collections.sort() sorting
+	 * @param list list with unordered integers, that would be sorted.
+	 * @return
+	 */
 	public static List<Integer> sortList(List<Integer> list){
 		Collections.sort(list);
 		return list;	
 	}
 	
-	public static boolean validateFileContent(String input){
+	
+	/**
+	 * checks if the passed input contains only numbers
+	 * @param fileContent string representation of the file content
+	 * @return true if the input parameter contains only numbers
+	 */
+	public static boolean validateFileContent(String fileContent){
 		Pattern p = Pattern.compile("^[0-9]*$");
-	    Matcher m = p.matcher(input);
-	    boolean b = m.matches() || input.contains(Constants.FILE_DELIMETER);
+	    Matcher m = p.matcher(fileContent);
+	    boolean b = m.matches() || fileContent.contains(Constants.FILE_DELIMETER);
 	    return b;
 	}
+	
 	
 	/**
 	 * By passed directory returns arrayList, which elements are reference to the files in this directory
@@ -54,11 +66,23 @@ public class Utility {
         return subFiles;
 	}
 	
-	public static void validateFile(File f) throws FileNotFoundException{
-		if(f == null || !f.exists())
+	
+	/**
+	 * Checks if the passed file exists
+	 * @param file 
+	 * @throws FileNotFoundException
+	 */
+	public static void validateFile(File file) throws FileNotFoundException{
+		if(file == null || !file.exists())
 			throw new FileNotFoundException();
 	}
 	
+	
+	/**
+	 * Cleans the working folder, where subfiles used for creating of subfiles are created. 
+	 * Uses walkFileTree() method for walking throw the directory.
+	 * @throws IOException
+	 */
 	public static void cleanWorkingDirectory() throws IOException{
 		File folder = new File(Constants.MAIN_FILES_FOLDER_NAME);
 		if(folder.exists()){
@@ -80,6 +104,7 @@ public class Utility {
 		}
 	}
 	
+	
 	/**
 	 * If the passed file is directory, checks if this directory exists. If not, new empty directory would be created
 	 * @param dir
@@ -88,6 +113,7 @@ public class Utility {
 		if(dir != null && dir.isDirectory() && !dir.exists())
 			dir.mkdir();
 	}
+	
 	
 	/**
 	 * If the passed file exists it should be deleted an then created new empty file
@@ -99,8 +125,7 @@ public class Utility {
 		{
 			if(f.exists())
 				f.delete();
-			else
-				f.createNewFile();
+			
 		}
 	}
 }

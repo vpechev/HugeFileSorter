@@ -14,7 +14,6 @@ public class Constants {
 	
 	public final static String FILE_TYPE = ".txt";
 	
-	
 	public final static int MAX_INTEGER_NUMBER = 1_000_000; 
 	
 }	

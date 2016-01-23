@@ -6,11 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -52,12 +48,18 @@ public class FileCreator {
 	}
 	
 	
-	public static void CreateSortedSubFiles(File f, long subFileSize) throws FileNotFoundException{
+	/**
+	 * Divides the passed file into subfiles, which count is defined by the passed size for each subFile
+	 * @param file passed file for dividing
+	 * @param subFileSize the size of each subfile
+	 * @throws FileNotFoundException
+	 */
+	public static void CreateSortedSubFiles(File file, long subFileSize) throws FileNotFoundException{
 		System.out.println("Begin creating subfiles!");
 		
-		Utility.validateFile(f);
+		Utility.validateFile(file);
 		
-		try(BufferedReader br = new BufferedReader(new FileReader(f))) {
+		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
 		    String text = null;
 		    
 		    List<Integer> fileExtractionList = new ArrayList<Integer>();
@@ -94,6 +96,7 @@ public class FileCreator {
 		
 	}
 	
+	
 	/**
 	 * Appends the passed element to the collection. If the elements count is more than the maximum allowed elements, 
 	 * the collection will be written to a file and this collection will be cleared.
@@ -110,7 +113,13 @@ public class FileCreator {
 		
 		fileExtractionList.add(element);
 	}
-		
+	
+	
+	/**
+	 * writes the passed list to a file 
+	 * @param list
+	 * @throws IOException
+	 */
 	private static void writeListToFile(List<Integer> list) throws IOException{
 		File outerDir = new File(Constants.MAIN_FILES_FOLDER_NAME);
 		File innerDir = new File(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
