@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -107,6 +108,7 @@ public class FileCreator {
 	 */
 	private static void appendToList(List<Integer> fileExtractionList, int element) throws IOException{
 		if( fileExtractionList.size() >= Constants.MAX_SUBFILE_COLLECTION_ELEMENTS_COUNT ){
+			System.out.println(Arrays.toString(fileExtractionList.toArray()).substring(0, 100));
 			writeListToFile(fileExtractionList);
 			fileExtractionList.clear();
 		}
@@ -133,7 +135,7 @@ public class FileCreator {
 		
 		Utility.checkFile(file);
 		
-		list = Utility.sortList(list);
+		Utility.sortList(list);
 		
 		try(PrintWriter pr = new PrintWriter(file)){
 			for(int i : list){

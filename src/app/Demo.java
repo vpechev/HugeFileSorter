@@ -17,35 +17,31 @@ public class Demo {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			//deletes the files directory from the last run
-			//Utility.cleanWorkingDirectory();
-						
-			//File initialRandomFile = FileCreator.CreateRandomNumbersFile(1_073_741_824);
+			// deletes the files directory from the last run
+			// Utility.cleanWorkingDirectory();
 			
-			File initialRandomFile = new File("files/fileForSort.txt");
-			
+			File initialRandomFile = getInitialFile();
+
 			long t0 = System.currentTimeMillis();
-			FileCreator.CreateSortedSubFiles(initialRandomFile, Constants.SUB_FILE_SIZE);
-			long t01 = System.currentTimeMillis();
-			System.out.println("Total time for creating sub files " + (t01 - t0));
-			
-			
+			FileCreator.CreateSortedSubFiles(initialRandomFile,
+					Constants.SUB_FILE_SIZE);
+			measureElapsedTime(t0, "Total time for creating sub files ");
+
 			Path subFilesDir = Paths.get(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 			List<File> subfiles = Utility.GetSubFilesFromDirectory(subFilesDir);
-			
-			
+
+			//merging the divided subfiles
 			ForkJoinPool pool = new ForkJoinPool();
-			try{
+			try {
 				long t1 = System.currentTimeMillis();
-				pool.invoke(new FilesSorterAndMergerTask(subfiles, 0, subfiles.size()));
-				long t2 = System.currentTimeMillis();
-				System.out.println("Time elapsed: " + (t2-t1) + " ms.");
-			}
-			finally{
+				pool.invoke(new FilesSorterAndMergerTask(subfiles, 0, subfiles
+						.size()));
+				measureElapsedTime(t1, "Time for merging the sub files ");
+				measureElapsedTime(t0, "TOTAL TIME for merging of the file ");
+			} finally {
 				pool.shutdown();
 			}
-			
-			
+
 			System.out.println("Done!");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -53,4 +49,32 @@ public class Demo {
 		}
 	}
 	
+	
+	/**
+	 * measures the total time by passed start time
+	 * @param start
+	 * @param message that would be printed with the elapsed time
+	 */
+	private static void measureElapsedTime(long start, String message){
+		long finish = System.currentTimeMillis();
+		long timeMillis = finish - start;
+		long timeSeconds = timeMillis / 1000;
+		System.out.println(message + timeMillis + " ms. = " + timeSeconds + " sec.");
+	}
+	
+	
+	//just for purposes of the Demo
+	private static File getInitialFile() throws IOException{
+		File initialRandomFile;
+		boolean useReadyFile = false;
+		if(useReadyFile)
+			initialRandomFile = new File("files/fileForSort.txt");
+		else{
+			//long fileForSortSize_10GB = 10_737_418_240L;
+			long fileForSortSize_512MB = 524_288_000L, fileForSortSize_200MB= 209_715_200, fileForSortSize_1MB = 1_048_576;
+			initialRandomFile = FileCreator.CreateRandomNumbersFile(fileForSortSize_1MB);
+		}
+		return initialRandomFile;
+	}
+
 }

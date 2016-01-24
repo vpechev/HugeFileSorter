@@ -51,7 +51,14 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
 		}
-
+		finally{
+			//deletes the read subfiles
+//			try {
+//				Utility.deleteParticularFiles();
+//			} catch (IOException e) {
+//				throw new RuntimeException(e.getMessage());
+//			}
+		}
 	}
 
 	private File mergeFiles(File fileA, File fileB) throws FileNotFoundException, IOException{
@@ -65,70 +72,69 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 		
 		Utility.checkFile(mergedFile);
 		
-//		FileReader fileReaderA = null;
-//		FileReader fileReaderB = null;
+		//it's commend, because the rename method does not work by the appropriate way.
+//		if(!isFileARenamed || !isFileBRenamed)	throw new RuntimeException("Error in renaming file");
 		
-//		if(!isFileARenamed || !isFileBRenamed)
-//			throw new RuntimeException("Error in renaming file");
-			
-		try(FileReader fileReaderA = new FileReader(fileA); FileReader fileReaderB = new FileReader(fileB))
-		{
-					
-			
+		FileReader fileReaderA = null;
+		FileReader fileReaderB = null;
+		
+		try{
+			fileReaderA = new FileReader(fileA); 
+			fileReaderB = new FileReader(fileB);
+		
 			try( BufferedReader readerA = new BufferedReader(fileReaderA);
 				 BufferedReader readerB = new BufferedReader(fileReaderB); 
 				 PrintWriter writer = new PrintWriter(mergedFile)) 
 			{
 					
-				String lineA = readerA.readLine();
-				String lineB = readerB.readLine();
+				String lineA = Utility.readNextLine(readerA);
+				String lineB = Utility.readNextLine(readerB);
 	
-				int first;
-				int second;
+				int first, second;
 				
 				while(true){
+					//this to if statements cannot be extracted to methods, because the sequence order is important
+					//and that's while different while loops constructions are used in the else statements
 					if(lineA != null){
-						first = Integer.valueOf(lineA);
+						first = Utility.parseStringToInt(lineA);
 					}
 					else{
 						if(lineB != null){
 							do{
-								writer.println(Integer.valueOf(lineB));
-							}while((lineB = readerB.readLine()) != null);
+								Utility.WriteNumbersToStream(writer, Utility.parseStringToInt(lineB));
+							}while((lineB = Utility.readNextLine(readerB)) != null);
 						}
-									
+						
 						return mergedFile;
 					}
 					
 					if(lineB != null){
-						second = Integer.valueOf(lineB);
+						second = Utility.parseStringToInt(lineB);
 					}
 					else{
-						while((lineA = readerA.readLine()) != null){
-							writer.println(Integer.valueOf(lineA));
+						while((lineA = Utility.readNextLine(readerA)) != null){
+							Utility.WriteNumbersToStream(writer, Utility.parseStringToInt(lineA));
 						}
 						return mergedFile;
 					}
 					
 					
 					if(first < second){
-						writer.println(first);
+						Utility.WriteNumbersToStream(writer, first);
 						
-						lineA = readerA.readLine();
+						lineA = Utility.readNextLine(readerA);
 					}
 					else if(first > second){
-						writer.println(second);
+						Utility.WriteNumbersToStream(writer, second);
 						
-						lineB = readerB.readLine();
+						lineB = Utility.readNextLine(readerB);
 					}
 					else{
-						writer.println(first);
-						writer.println(second);
+						Utility.WriteNumbersToStream(writer, first, second);
 						
-						lineA = readerA.readLine();
-						lineB = readerB.readLine();
+						lineA = Utility.readNextLine(readerA);
+						lineB = Utility.readNextLine(readerB);
 					}	
-	
 				}
 			}
 		}
@@ -137,16 +143,16 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Passed files do not exist");
 		}
-//		finally{	
-//			
-//			/*boolean isFileARenamed = */ fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
-//			/*boolean isFileBRenamed = */ fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
-//			
-//			if(fileReaderA != null)
-//				fileReaderA.close();
-//			
-//			if(fileReaderB != null)
-//				fileReaderB.close();
-//		}
+		finally{	
+			 fileA.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileA.getName()));
+			 fileB.renameTo(new File(Constants.MAIN_FILES_FOLDER_NAME + "/x_" + fileB.getName()));	
+			 			
+			 if(fileReaderA != null)
+			  	fileReaderA.close();
+			 
+			 if(fileReaderB != null)
+			  	fileReaderB.close();
+		}
 	}
+	
 }

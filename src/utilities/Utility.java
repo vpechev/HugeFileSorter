@@ -1,8 +1,10 @@
 package utilities;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -25,9 +27,41 @@ public class Utility {
 	 * @param list list with unordered integers, that would be sorted.
 	 * @return
 	 */
-	public static List<Integer> sortList(List<Integer> list){
+	public static void sortList(List<Integer> list){
 		Collections.sort(list);
-		return list;	
+	}
+	
+	
+	/**
+	 * reads the next line from the passed reader
+	 * @param reader
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readNextLine(BufferedReader reader) throws IOException{
+		return reader.readLine();
+	}
+	
+	
+	/**
+	 * parse the passed string to integer
+	 * @param inputString string that would be passed
+	 * @return
+	 */
+	public static int parseStringToInt(String inputString){
+		return Integer.valueOf(inputString);
+	}
+	
+	
+	/**
+	 * Writes the passed number using the passed writer
+	 * @param writer
+	 * @param number
+	 */
+	public static synchronized void WriteNumbersToStream(PrintWriter writer, int...numbers){
+		for (int number : numbers) {
+			writer.println(number);			
+		}
 	}
 	
 	
@@ -84,7 +118,9 @@ public class Utility {
 	 * @throws IOException
 	 */
 	public static void cleanWorkingDirectory() throws IOException{
-		File folder = new File(Constants.MAIN_FILES_FOLDER_NAME);
+		System.out.println("Begin cleaning working directory");
+		
+		File folder = new File(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 		if(folder.exists()){
 		   Path directory = Paths.get(folder.getAbsolutePath());
 		   Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
@@ -102,15 +138,36 @@ public class Utility {
 
 		   });
 		}
+		
+		System.out.println("Working directory successfully cleaned!");
 	}
 	
+	
+	/**
+	 * deletes the merges subfiles
+	 * @throws IOException
+	 */
+	public static void deleteParticularFiles() throws IOException{
+		File folder = new File(Constants.MAIN_FILES_FOLDER_NAME);
+		if(folder.exists()){
+		   Path directory = Paths.get(folder.getAbsolutePath());
+		   Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+			   @Override
+			   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				   if(file.getFileName().toString().charAt(0) == 'x')
+					   Files.delete(file);
+				   return FileVisitResult.CONTINUE;
+			   }
+		   });
+		}
+	}
 	
 	/**
 	 * If the passed file is directory, checks if this directory exists. If not, new empty directory would be created
 	 * @param dir
 	 */
 	public static void checkDirectory(File dir){
-		if(dir != null && dir.isDirectory() && !dir.exists())
+		if(dir != null && !dir.exists())
 			dir.mkdir();
 	}
 	
