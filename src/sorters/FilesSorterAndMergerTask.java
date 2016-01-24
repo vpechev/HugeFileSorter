@@ -40,7 +40,7 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 
 		invokeAll(leftTask, rightTask);
 
-		try {
+		try {			
 			return mergeFiles(leftTask.join(), rightTask.join());
 		}
 		catch (IllegalArgumentException e) {
@@ -50,14 +50,6 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 		catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
-		}
-		finally{
-			//deletes the read subfiles
-//			try {
-//				Utility.deleteParticularFiles();
-//			} catch (IOException e) {
-//				throw new RuntimeException(e.getMessage());
-//			}
 		}
 	}
 

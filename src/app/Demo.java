@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 import sorters.FilesSorterAndMergerTask;
+import threads.CleanerThread;
 import utilities.Utility;
 import constants.Constants;
 import creations.FileCreator;
@@ -30,6 +31,11 @@ public class Demo {
 			Path subFilesDir = Paths.get(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 			List<File> subfiles = Utility.GetSubFilesFromDirectory(subFilesDir);
 
+			
+
+			CleanerThread cleanerThread = new CleanerThread();
+			cleanerThread.start();
+			
 			//merging the divided subfiles
 			ForkJoinPool pool = new ForkJoinPool();
 			try {
@@ -39,6 +45,8 @@ public class Demo {
 				measureElapsedTime(t1, "Time for merging the sub files ");
 				measureElapsedTime(t0, "TOTAL TIME for merging of the file ");
 			} finally {
+				cleanerThread.interrupt();
+				Utility.deleteParticularFiles();
 				pool.shutdown();
 			}
 
@@ -66,7 +74,7 @@ public class Demo {
 	//just for purposes of the Demo
 	private static File getInitialFile() throws IOException{
 		File initialRandomFile;
-		boolean useReadyFile = false;
+		boolean useReadyFile = true;
 		if(useReadyFile)
 			initialRandomFile = new File("files/fileForSort.txt");
 		else{

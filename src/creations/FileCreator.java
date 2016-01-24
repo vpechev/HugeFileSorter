@@ -108,7 +108,7 @@ public class FileCreator {
 	 */
 	private static void appendToList(List<Integer> fileExtractionList, int element) throws IOException{
 		if( fileExtractionList.size() >= Constants.MAX_SUBFILE_COLLECTION_ELEMENTS_COUNT ){
-			System.out.println(Arrays.toString(fileExtractionList.toArray()).substring(0, 100));
+			//System.out.println(Arrays.toString(fileExtractionList.toArray()).substring(0, 100));
 			writeListToFile(fileExtractionList);
 			fileExtractionList.clear();
 		}
