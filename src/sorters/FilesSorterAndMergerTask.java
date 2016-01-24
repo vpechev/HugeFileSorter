@@ -70,7 +70,7 @@ public class FilesSorterAndMergerTask extends RecursiveTask<File> {
 									+ newSubFileName
 									+ Constants.FILE_TYPE);
 		
-		Utility.checkFile(mergedFile);
+		Utility.recreateFile(mergedFile);
 		
 		//it's commend, because the rename method does not work by the appropriate way.
 //		if(!isFileARenamed || !isFileBRenamed)	throw new RuntimeException("Error in renaming file");

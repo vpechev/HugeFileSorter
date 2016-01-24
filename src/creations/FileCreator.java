@@ -28,11 +28,11 @@ public class FileCreator {
 	public static File CreateRandomNumbersFile(long fileSize) throws IOException{
 		File dir = new File(Constants.MAIN_FILES_FOLDER_NAME);
 		
-		Utility.checkDirectory(dir);
+		Utility.createDirectory(dir);
 		
 		File f = new File(Constants.MAIN_FILES_FOLDER_NAME + "/fileForSort" + Constants.FILE_TYPE);
 		
-		Utility.checkFile(f);
+		Utility.recreateFile(f);
 		
 		Random rand = new Random(System.currentTimeMillis()); 
 		try(PrintWriter pr = new PrintWriter(f)){
@@ -126,14 +126,14 @@ public class FileCreator {
 		File outerDir = new File(Constants.MAIN_FILES_FOLDER_NAME);
 		File innerDir = new File(Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME);
 		
-		Utility.checkDirectory(outerDir);
-		Utility.checkDirectory(innerDir);
+		Utility.createDirectory(outerDir);
+		Utility.createDirectory(innerDir);
 						
 		String fileName = "subFile_" + (SubFilesCount++) + Constants.FILE_TYPE;
 		String pathString = Constants.MAIN_FILES_FOLDER_NAME + "/" + Constants.SUB_FILES_FOLDER_NAME + "/" + fileName;
 		File file = new File(pathString);
 		
-		Utility.checkFile(file);
+		Utility.recreateFile(file);
 		
 		Utility.sortList(list);
 		

@@ -73,7 +73,7 @@ public class Utility {
 	public static boolean validateFileContent(String fileContent){
 		Pattern p = Pattern.compile("^[0-9]*$");
 	    Matcher m = p.matcher(fileContent);
-	    boolean b = m.matches() || fileContent.contains(Constants.FILE_DELIMETER);
+	    boolean b = m.matches();
 	    return b;
 	}
 	
@@ -166,7 +166,7 @@ public class Utility {
 	 * If the passed file is directory, checks if this directory exists. If not, new empty directory would be created
 	 * @param dir
 	 */
-	public static void checkDirectory(File dir){
+	public static void createDirectory(File dir){
 		if(dir != null && !dir.exists())
 			dir.mkdir();
 	}
@@ -177,7 +177,7 @@ public class Utility {
 	 * @param f
 	 * @throws IOException
 	 */
-	public static void checkFile(File f) throws IOException{
+	public static void recreateFile(File f) throws IOException{
 		if(f != null)
 		{
 			if(f.exists())
